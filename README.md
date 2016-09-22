@@ -1,6 +1,6 @@
 BraDiPluS
 =========
-R package to analyse the data of plugs produced using in-house combinatorial microfluidics platform and adquired using an in-house LabVIEW program allowing the detection of three channels:
+BraDiPluS - Braille Display Plugs Data Analysis - is an R package developed to analyse the data of plugs produced using in-house combinatorial microfluidics platform and adquired using an in-house LabVIEW program allowing the detection of three channels:
 * _blue_: sample barcodes
 * _green_: Caspase-3 activity assay
 * _orange_: marker dye to monitor mixing of reagents 
