@@ -61,3 +61,6 @@ compute z-score
 ```
 allData_scale<-apply(allData,2,scale)
 ```
+
+
+![alt text](https://s-media-cache-ak0.pinimg.com/564x/50/0a/43/500a43906dea54dbff4d81d9ab7dfb23.jpg "BraDiPluS")
