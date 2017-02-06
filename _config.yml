@@ -17,7 +17,7 @@ tagline:          BraDiPLuS documentation
 description:      "Braille Display Plugs Data Analysis"
 #url:              https://github.com/saezlab/projectDocumentationTemplate
 baseurl:          /BraDiPluS/
-toollogo:         /BraDiPluS/fig/Logo_BraDiPluS.png
+toollogo:         /BraDiPluS/public/Logo_BraDiPluS.png
 
 author:
   name:           'Federica Eduati'
