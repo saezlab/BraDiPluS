@@ -15,4 +15,4 @@ BraDiPluS (**Bra**ille **Di**splay **Plu**gs Data Analysi**s**) is an R package 
 
 + Main reference: [BioRxiv preprint](http://biorxiv.org/content/early/2016/12/14/093906) 
 
-  > F. Eduati<sup>*, R. Utharala<sup>*, D. Madhavan, U. P. Neumann, T. Cramer, J. Saez-Rodriguez<sup>+, C. A. Merten<sup>+. Rapid identification of optimal drug combinations for personalized cancer therapy using microfluidics. bioRxiv 093906 (2016). doi:10.1101/093906 (<sup>* co-first, <sup>+ co-corresponding)
+  > F. Eduati<sup>*</sup>, R. Utharala<sup>*</sup>, D. Madhavan, U. P. Neumann, T. Cramer, J. Saez-Rodriguez<sup>+</sup>, C. A. Merten<sup>+</sup>. Rapid identification of optimal drug combinations for personalized cancer therapy using microfluidics. bioRxiv 093906 (2016). doi:10.1101/093906 (<sup>*</sup> co-first, <sup>+</sup> co-corresponding)
