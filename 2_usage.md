@@ -30,18 +30,21 @@ plotData(data=MyData, channels=c("blue", "orange", "green"), samples = samples)
 ```
 
 select the peaks for each sample
+
 ```R
 samplesPeaks <- selectSamplesPeaks(samples, channel="green", metric="median",
 							baseThr=0.01, minLength=350, discartPeaks="first", discartPeaksPerc=5)
 ```
 
 remove outliers based on orange channel
+
 ```R
 runs<-list(run1=samplesPeaks)
 runs.qa<-qualityAssessment(runs=runs)
 ```
 
 look at the median sample values
+
 ```R
 allData<-do.call(cbind, lapply(runs.qa, function(myRun){
 sapply(sapply(myRun, get, x="green"), median)
@@ -49,6 +52,7 @@ sapply(sapply(myRun, get, x="green"), median)
 ```
 
 compute z-score
+
 ```R
 allData_scale<-apply(allData,2,scale)
 ```
