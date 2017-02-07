@@ -31,7 +31,8 @@ plotData(data=MyData, channels=c("blue", "orange", "green"), samples = samples)
 
 select the peaks for each sample
 ```R
-samplesPeaks <- selectSamplesPeaks(samples, channel="green", metric="median", baseThr=0.01, minLength=350, discartPeaks="first", discartPeaksPerc=5)
+samplesPeaks <- selectSamplesPeaks(samples, channel="green", metric="median",
+							baseThr=0.01, minLength=350, discartPeaks="first", discartPeaksPerc=5)
 ```
 
 remove outliers based on orange channel
