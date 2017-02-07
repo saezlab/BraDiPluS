@@ -22,7 +22,8 @@ plotData(data=MyData, channels=c("blue", "orange", "green"))
 separate the different samples (separated by barcode) 
 
 ```R
-res <- samplesSelection(data=MyData, BCchannel="blue",BCthr=0.01, BCminLength=100, distThr=16, plotMyData=F, barcodePos="before")
+res <- samplesSelection(data=MyData, BCchannel="blue",BCthr=0.01,
+	BCminLength=100, distThr=16, plotMyData=F, barcodePos="before")
 samples<-res$samples
 names(samples)<-sampleNames
 
@@ -33,7 +34,7 @@ select the peaks for each sample
 
 ```R
 samplesPeaks <- selectSamplesPeaks(samples, channel="green", metric="median",
-							baseThr=0.01, minLength=350, discartPeaks="first", discartPeaksPerc=5)
+	baseThr=0.01, minLength=350, discartPeaks="first", discartPeaksPerc=5)
 ```
 
 remove outliers based on orange channel
