@@ -3,4 +3,8 @@ layout: page
 title: Installation
 ---
 
-Please provide an installation guide.	
+For installation open R and, from your local folder with the package, type:
+
+```R
+install.packages('BraDiPluS',repos=NULL,type='src')
+```
