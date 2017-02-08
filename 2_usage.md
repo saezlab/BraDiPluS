@@ -3,7 +3,7 @@ layout: page
 title: Usage
 ---
 
-This documentation is based on the example script (/examples/workflow_preprocessing.R) and data files ("data/BxPC3_data.RData" and "data/sampleNames.RData") provided in the package.
+This documentation is based on the example script (*/examples/workflow_preprocessing.R*) and data files (*data/BxPC3_data.RData*" and "*data/sampleNames.RData*") provided in the package.
 
 For more detailed information look at the documentation for each funtion (typing "?nameOfFunction" in R).
 
@@ -29,8 +29,6 @@ To plot the data you can use the following function:
 ```R
 plotData(data=MyData, channels=c("blue", "orange", "green"))
 ```
-
-![plot of all data](https://github.com/saezlab/BraDiPluS/blob/gh-pages/public/fig/allData.png)
 
 Please check the documentation ?plotData to see additional attributes which can be passed to the function to plot only a specific time range or to highlight info about peaks and samples which can be automatically detected with the functions described in the next sections.
 
