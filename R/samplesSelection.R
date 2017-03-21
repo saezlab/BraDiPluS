@@ -1,16 +1,50 @@
-## separate samples
-# INPUT:
-# data => all data to be analyzed (formatted as data.frame with at least 2 columns: time and blue (blue channel))
-# BCchannel =>channel used for barcoding, default is "blue"
-# BCthr <- threshold used in order to define what is a peak. Default is 0.01
-# distThr <- minimum distance between peaks to be considered a sample
-# barcodePos <- specify if the barcode is before or after the sample ("before" or "after"), default is "after"
-# OUTPUT:
-# samples => list containing a sample (data.frame with arguments frame and FL) in each position
-# barcode => corresponding barcode for each sample 
+#
+#  This file is part of the `BraDiPluS` R package
+#
+#  Copyright (c) 2016 EMBL-EBI
+#
+#  File author(s): Federica Eduati (federica.eduati@gmail.com)
+#
+#  Distributed under the GPLv3 License.
+#  See accompanying file LICENSE.txt or copy at
+#      http://www.gnu.org/licenses/gpl-3.0.html
+#
+#  Website: https://github.com/saezlab/BraDiPluS
+# --------------------------------------------------------
+#
+#' Separate different experiemtnal conditions (i.e. samples).
+#' 
+#' \code{samplesSelection} Selects samples using the barcoding channel to separate them (and optionally visualizes them).
+#' 
+#' This function allows to select the samples using the selected barcoding channel to separate replicates (peaks) from
+#' different experimental conditons.
+#' 
+#' @param data data to be analyzed (formatted as data.frame with 4 columns: green, orange, blue, time)}
+#' @param channel channel(s) to be visualized, which is in general the channel with the reporter data. Default="green"
+#' @param BCchannel channel used for barcoding, default is "blue"
+#' @param BCthr threshold used in order to define what is a peak in the barcoding channel. Default is 0.05
+#' @param distThr minimum duration of a sample (in the same unit used for time)
+#' @param plotMyData TRUE to show the plot of the data, FALSE not to show it.
+#' @param BCminLength minimum length of a plug/droplet in number of data points for the barcoding channel,
+#' default is 100 (note that unit here is number of data points, not seconds)
+#' @param barcodePos specify if the barcode is before or after the sample ("before" or "after"), default is "after"
+#' @return This function returns a list with two components:
+#' \describe{
+#'   \item{samples}{list containing a sample in each position. Each sample is a data.frame
+#'   with the same structure of the input data}
+#'   \item{barcode}{corresponding barcode for each sample. Each barcode is a data.frame
+#'   with the same structure of the input data}
+#' }
+#' @seealso \code{\link{selectSamplesPeaks}}.
+#' @examples 
+#' data(BxPC3_data,package="BraDiPluS")
+#' res <- samplesSelection(data=MyData, BCchannel="blue",BCthr=0.01,
+#' BCminLength=100, distThr=16, barcodePos="before")
+#' samples <-res$samples
+#' barcode <-res$barcode
+#' @export
 
-
-samplesSelection <- function(data, channel="green", BCchannel="blue", BCthr=0.01, distThr=100, plotMyData=FALSE, BCminLength=10, barcodePos="after"){
+samplesSelection <- function(data, channel="green", BCchannel="blue", BCthr=0.05, distThr=16, plotMyData=FALSE, BCminLength=100, barcodePos="after"){
   
   # slect peaks in the barcoding channel
   peaks <- peaksSelection(data, channel=BCchannel, baseThr=BCthr, minLength=BCminLength)

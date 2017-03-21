@@ -11,3 +11,4 @@ biocViews: CellBasedAssays, CellBiology, Proteomics, Bioinformatics,
 Description: This package allows to analyse high-throughput microfluidic data of plugs or droplets generated using the braille display. Applied to the screening of drug combinations.
 License: GPL-3
 LazyLoad: yes
+RoxygenNote: 6.0.1

@@ -1,13 +1,49 @@
-# data => input data, must have at least a column time and one of the channels (green, orange and/or blue)
-# channels => a vector with the name of the channels we want to plot (e.g. channels=c("green", "blue") to plot the green and the blue channel)
-# startTime => initial time point to be plot (default is NA, plots from the first time point in the data)
-# endTime => last time point to be plot (default is NA, plots from the last time point in the data)
-# peaks => peaks computed using the function peaksSelection
-# savePlot => if FALSE, the plot is not saved; if TRUE plot is saved with default file name; if string, plot is saved with given filename
-
-# example
-# peaks <- peaksSelection(data, channel="green")
-# plotData(data, channels=c("blue", "green"), startTime=400, endTime=1000, peaks=peaks)
+#
+#  This file is part of the `BraDiPluS` R package
+#
+#  Copyright (c) 2016 EMBL-EBI
+#
+#  File author(s): Federica Eduati (federica.eduati@gmail.com)
+#
+#  Distributed under the GPLv3 License.
+#  See accompanying file LICENSE.txt or copy at
+#      http://www.gnu.org/licenses/gpl-3.0.html
+#
+#  Website: https://github.com/saezlab/BraDiPluS
+# --------------------------------------------------------
+#
+#' Plot the data and the selected peaks.
+#' 
+#' \code{plotData} allows to visualize the data.
+#' 
+#' This function is used to plot the desired range of data of one or more channels. It can be
+#' used also to plot the peaks selected on one channel using the function \code{\link{peaksSelection}}.
+#' 
+#' @param data input data (formatted as data.frame with 4 columns: green, orange, blue, time),
+#' imported from the .txt file saved by the in-house LabVIEW progam
+#' @param channels a vector with the name of the channels we want to plot (e.g. channels=c("green", "blue")
+#' to plot the green and the blue channel)
+#' @param startTime initial time point to be plot. Default is NA, plots from the first time point in the data
+#' @param ymin lower y limit. Default is NA, plots from the first time point in the data
+#' @param ymax upper y limit. Default is NA, plots from the first time point in the data
+#' @param peaks peaks computed using the function \code{\link{peaksSelection}}
+#' @param samples samples selected using the function \code{\link{samplesSelection}}
+#' @param ytext position in the y axes of the sample names/numbers if samples argument is specified
+#' @param savePlot if FALSE, the plot is not saved; if TRUE plot is saved with default file name; if string,
+#' plot is saved with given filename. Plot is saved in .png format
+#' @seealso \code{\link{peaksSelection}} to select peaks in a specific channel, \code{\link{samplesSelection}} to separate
+#' data in samples
+#' @examples 
+#' data(BxPC3_data, package="BraDiPluS")
+#' plotData(data=MyData, channels=c("blue", "green", "orange"))
+#' 
+#' res <- samplesSelection(data=MyData, BCchannel="blue",BCthr=0.01, BCminLength=100, distThr=16, plotMyData=F, barcodePos="before")
+#' samples<-res$samples
+#' plotData(data=MyData, channels=c("blue", "orange", "green"), samples = samples)
+#' 
+#' BCpeaks <- peaksSelection(MyData, channel="blue")
+#' plotData(data=MyData, channels=c("blue", "orange", "green"), peaks = BCpeaks)
+#' @export
 
 plotData <- function(data, channels, startTime=NA, endTime=NA, ymin=NA, ymax=NA, peaks=NA, samples=NA, ytext=(-0.005), savePlot=FALSE){
 	
