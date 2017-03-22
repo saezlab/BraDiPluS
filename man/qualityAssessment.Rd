@@ -7,20 +7,20 @@
 qualityAssessment(runs)
 }
 \arguments{
-\item{runs}{List with one element for each run. For each run the list element correspond to the peaks selected for the different
-samples using \code{\link{selectSamplesPeaks}} or \code{\link{samplesSelection}}}
+\item{runs}{List with one element for each run. For each run the list elements correspond to the peaks selected for the different
+samples using \code{\link{selectSamplesPeaks}} (after defining samples with \code{\link{samplesSelection}})}
 }
 \value{
 This function returns a list with the same structure of the one used as input but without the outlier peaks.
 }
 \description{
-\code{qualityAssessment} removes low quality replicates.
+\code{qualityAssessment} removes low quality peaks (i.e. replicates).
 }
 \details{
 This function allows to remove the peaks that are outliers based on the orange channel. Orange dye is added to the cells suspention
 in order to monitor mixing of reagents in each plug. This function looks at the distribution of the 
 values of all orange peaks and marks the possible outliers: corresponding peaks are removed from further
-analysis. It can be done at one for different runs (where we call run a complete cycle of all the samples corresponding
+analysis. It can be done at once for different runs (where we call run a complete cycle of all the samples corresponding
 to different experimental conditions).
 }
 \examples{
@@ -37,5 +37,5 @@ runs<-list(run1=samplesPeaks)
 runs.qa<-qualityAssessment(runs=runs) 
 }
 \seealso{
-\code{\link{samplesSelection}} to select samples.
+\code{\link{samplesSelection}} to define samples, \code{\link{selectSamplesPeaks}} to select peaks for each sample
 }

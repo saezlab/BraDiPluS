@@ -14,15 +14,18 @@
 #
 #' Select fluorescence peaks.
 #' 
-#' \code{peaksSelection} allows to select peaks for the selected channel.
+#' \code{peaksSelection} allows to identify peaks for the defined channel.
 #' 
 #' This function reads the data produced with labview in the 3 channels (green, orange and blue)
-#' and selects the peaks corresponding to the droplets in the selected channel.
+#' and selects the peaks corresponding to the plugs in the user defined channel. This is done by considering
+#' as peaks the signal that goes above a threshold (defined by argument "baseThr") and stays above for a minimum number
+#' of data points (defined by argument "minLength").
 #' 
 #' @param data data to be analyzed (formatted as data.frame with 4 columns: green, orange, blue, time)
 #' @param channel channel to be considered, default="green"
-#' @param metric metric to be used, selct among "median", "mean", "max" or "AUC", default is median
-#' @param Nchannel channel to be used to normalise data, default is NA
+#' @param metric metric to be used to define the value to assign to each peak, select among "median", "mean",
+#' "max" or "AUC", default is "median"
+#' @param Nchannel channel to be used to normalise data, default is NA (raccomended to not use it)
 #' @param baseThr threshold on the baseline used in order to define what is a peak, default is 0.01
 #' @param minLength minimum length of a plug/droplet in number of data points, default is 10 (note that unit is
 #' number of data points, not seconds)

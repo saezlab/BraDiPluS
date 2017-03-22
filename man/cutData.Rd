@@ -7,18 +7,19 @@
 cutData(data, startTime = NA, endTime = NA)
 }
 \arguments{
-\item{data}{as imported from the .txt file saved by the in-house LabVIEW progam}
+\item{data}{data formatted as data.frame with 4 columns: green, orange, blue, time) as
+imported from the .txt file saved by the in-house LabVIEW progam}
 
-\item{startTime}{initial time point to be considered}
+\item{startTime}{initial time point of the new data structure}
 
-\item{endTime}{final time point to be considered}
+\item{endTime}{final time point of the new data structure}
 }
 \value{
 A data frame with the same structure of the input data but limited to
 the selected time range.
 }
 \description{
-\code{cutData} returns a data structure limited to the selected time range.
+\code{cutData} allows to select part of the data based on the defined time range.
 }
 \details{
 This function allows to create a new data structure including only data in a user

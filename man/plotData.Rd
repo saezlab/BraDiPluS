@@ -2,24 +2,21 @@
 % Please edit documentation in R/plotData.R
 \name{plotData}
 \alias{plotData}
-\title{Plot the data and the selected peaks.}
+\title{Plot the data.}
 \usage{
 plotData(data, channels, startTime = NA, endTime = NA, ymin = NA,
   ymax = NA, peaks = NA, samples = NA, ytext = (-0.005),
   savePlot = FALSE)
 }
 \arguments{
-\item{data}{input data (formatted as data.frame with 4 columns: green, orange, blue, time),
-imported from the .txt file saved by the in-house LabVIEW progam}
+\item{data}{input data (formatted as data.frame with 4 columns: green, orange, blue, time)}
 
 \item{channels}{a vector with the name of the channels we want to plot (e.g. channels=c("green", "blue")
 to plot the green and the blue channel)}
 
 \item{startTime}{initial time point to be plot. Default is NA, plots from the first time point in the data}
 
-\item{ymin}{lower y limit. Default is NA, plots from the first time point in the data}
-
-\item{ymax}{upper y limit. Default is NA, plots from the first time point in the data}
+\item{ymin, ymax}{lower and upper limit of the y axes. Default is NA, for automatically defined range to include all data.}
 
 \item{peaks}{peaks computed using the function \code{\link{peaksSelection}}}
 
@@ -31,11 +28,12 @@ to plot the green and the blue channel)}
 plot is saved with given filename. Plot is saved in .png format}
 }
 \description{
-\code{plotData} allows to visualize the data.
+\code{plotData} allows to visualize the data and, possibly, the selected samples and peaks.
 }
 \details{
-This function is used to plot the desired range of data of one or more channels. It can be
-used also to plot the peaks selected on one channel using the function \code{\link{peaksSelection}}.
+This function is used to visualize the desired range of data showing values for one or more channels. It can be
+used also to plot the peaks selected on one channel using the function \code{\link{peaksSelection}} and/or the
+samples identified using \code{\link{samplesSelection}}.
 }
 \examples{
 data(BxPC3_data, package="BraDiPluS")

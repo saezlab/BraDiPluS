@@ -2,7 +2,7 @@
 % Please edit documentation in R/selectSamplesPeaks.R
 \name{selectSamplesPeaks}
 \alias{selectSamplesPeaks}
-\title{Select fluorescence peaks.}
+\title{Select fluorescence peaks for each sample.}
 \usage{
 selectSamplesPeaks(samples, channel = "green", metric = "median",
   Nchannel = NA, baseThr = 0.01, minLength = 10, discartPeaks = NA,
@@ -15,7 +15,7 @@ selectSamplesPeaks(samples, channel = "green", metric = "median",
 
 \item{metric}{metric to be used, selct among "median", "mean", "max" or "AUC", default is median}
 
-\item{Nchannel}{channel to be used to normalise data, default is NA}
+\item{Nchannel}{channel to be used to normalise data, default is NA (use not recommended)}
 
 \item{baseThr}{threshold on the baseline used in order to define what is a peak, default is 0.01}
 
@@ -44,7 +44,8 @@ with one peak for each row and 9 columns:
 \code{selectSamplesPeaks} allows to select peaks for all samples.
 }
 \details{
-This function select the peaks for all the samples previously identified using \code{\link{samplesSelection}}
+This function select the peaks for all the samples previously identified using \code{\link{samplesSelection}} by applying the function
+\code{\link{peaksSelection}} to the data corresponding to the different samples.
 }
 \examples{
 data(BxPC3_data,package="BraDiPluS")

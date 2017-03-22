@@ -13,9 +13,10 @@ peaksSelection(data, channel = "green", metric = "median", Nchannel = NA,
 
 \item{channel}{channel to be considered, default="green"}
 
-\item{metric}{metric to be used, selct among "median", "mean", "max" or "AUC", default is median}
+\item{metric}{metric to be used to define the value to assign to each peak, select among "median", "mean",
+"max" or "AUC", default is "median"}
 
-\item{Nchannel}{channel to be used to normalise data, default is NA}
+\item{Nchannel}{channel to be used to normalise data, default is NA (raccomended to not use it)}
 
 \item{baseThr}{threshold on the baseline used in order to define what is a peak, default is 0.01}
 
@@ -40,11 +41,13 @@ This function returns a data.frame with one peak for each row and 9 columns:
 }
 }
 \description{
-\code{peaksSelection} allows to select peaks for the selected channel.
+\code{peaksSelection} allows to identify peaks for the defined channel.
 }
 \details{
 This function reads the data produced with labview in the 3 channels (green, orange and blue)
-and selects the peaks corresponding to the droplets in the selected channel.
+and selects the peaks corresponding to the plugs in the user defined channel. This is done by considering
+as peaks the signal that goes above a threshold (defined by argument "baseThr") and stays above for a minimum number
+of data points (defined by argument "minLength").
 }
 \examples{
 data(BxPC3_data,package="BraDiPluS")

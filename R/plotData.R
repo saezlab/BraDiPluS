@@ -12,20 +12,19 @@
 #  Website: https://github.com/saezlab/BraDiPluS
 # --------------------------------------------------------
 #
-#' Plot the data and the selected peaks.
+#' Plot the data.
 #' 
-#' \code{plotData} allows to visualize the data.
+#' \code{plotData} allows to visualize the data and, possibly, the selected samples and peaks.
 #' 
-#' This function is used to plot the desired range of data of one or more channels. It can be
-#' used also to plot the peaks selected on one channel using the function \code{\link{peaksSelection}}.
+#' This function is used to visualize the desired range of data showing values for one or more channels. It can be
+#' used also to plot the peaks selected on one channel using the function \code{\link{peaksSelection}} and/or the
+#' samples identified using \code{\link{samplesSelection}}.
 #' 
-#' @param data input data (formatted as data.frame with 4 columns: green, orange, blue, time),
-#' imported from the .txt file saved by the in-house LabVIEW progam
+#' @param data input data (formatted as data.frame with 4 columns: green, orange, blue, time)
 #' @param channels a vector with the name of the channels we want to plot (e.g. channels=c("green", "blue")
 #' to plot the green and the blue channel)
 #' @param startTime initial time point to be plot. Default is NA, plots from the first time point in the data
-#' @param ymin lower y limit. Default is NA, plots from the first time point in the data
-#' @param ymax upper y limit. Default is NA, plots from the first time point in the data
+#' @param ymin,ymax lower and upper limit of the y axes. Default is NA, for automatically defined range to include all data.
 #' @param peaks peaks computed using the function \code{\link{peaksSelection}}
 #' @param samples samples selected using the function \code{\link{samplesSelection}}
 #' @param ytext position in the y axes of the sample names/numbers if samples argument is specified

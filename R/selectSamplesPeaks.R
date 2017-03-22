@@ -12,16 +12,17 @@
 #  Website: https://github.com/saezlab/BraDiPluS
 # --------------------------------------------------------
 #
-#' Select fluorescence peaks.
+#' Select fluorescence peaks for each sample.
 #' 
 #' \code{selectSamplesPeaks} allows to select peaks for all samples.
 #' 
-#' This function select the peaks for all the samples previously identified using \code{\link{samplesSelection}}
+#' This function select the peaks for all the samples previously identified using \code{\link{samplesSelection}} by applying the function
+#' \code{\link{peaksSelection}} to the data corresponding to the different samples.
 #' 
 #' @param samples samples as output of the function \code{\link{samplesSelection}}
 #' @param channel channel to be considered, default="green"
 #' @param metric metric to be used, selct among "median", "mean", "max" or "AUC", default is median
-#' @param Nchannel channel to be used to normalise data, default is NA
+#' @param Nchannel channel to be used to normalise data, default is NA (use not recommended)
 #' @param baseThr threshold on the baseline used in order to define what is a peak, default is 0.01
 #' @param minLength minimum length of a plug/droplet in number of data points, default is 10 (note that unit is
 #' number of data points, not seconds)

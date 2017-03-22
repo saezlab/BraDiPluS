@@ -14,15 +14,16 @@
 #
 #' Cut a portion of the data.
 #' 
-#' \code{cutData} returns a data structure limited to the selected time range.
+#' \code{cutData} allows to select part of the data based on the defined time range.
 #' 
 #' This function allows to create a new data structure including only data in a user
 #' defined time interval (e.g. to remove test measuremets or to select one
 #' specific cycle).
 #' 
-#' @param data as imported from the .txt file saved by the in-house LabVIEW progam
-#' @param startTime initial time point to be considered
-#' @param endTime final time point to be considered
+#' @param data data formatted as data.frame with 4 columns: green, orange, blue, time) as
+#' imported from the .txt file saved by the in-house LabVIEW progam
+#' @param startTime initial time point of the new data structure
+#' @param endTime final time point of the new data structure
 #' @return A data frame with the same structure of the input data but limited to
 #' the selected time range.
 #' @examples 
