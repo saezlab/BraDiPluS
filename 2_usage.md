@@ -107,8 +107,13 @@ p3data_run2<-allData$patient3$run_2
 
 All runs for all patient/cell lines must have the same number of elements (which should correspond to the total number of experimental conditions, 62 in our case).
 
+The function can be applied to all patient/cell lines as follows:
 
-We will consider patient #3 to illustrate the usage of function *computeStatistics*.
+```R
+res<-computeStatistics(allData, controlName="FS + FS", thPval=0.1, thSD=1.5, subsample=F, saveFiles=T)
+```
+
+Here below we will consider patient #3 to illustrate the usage of function *computeStatistics*.
 
 ```R
 exampleData <- list(patient2=allData$patient2)
@@ -116,8 +121,14 @@ setwd("path/to/fuguresFolder")
 res<-computeStatistics(exampleData, controlName="FS + FS", thPval=0.1, thSD=1.5, subsample=F, saveFiles=T)
 ```
 
-This will produce two figures called "boxplot.pdf" and "volcanoplot.pdf" 
+This will produce two figures called "boxplot.pdf" and "volcanoplot.pdf" and outputs a data.frame with the computed zscores and p-values for each sample and each patient/cell line, along with info about which samples are significant based on the used defined criteria. For each patient/cell line the z-score is computed separately for each run and then averaged. P-values are also computed separately for each run, using Wilcoxon rank sum test to verify if the response to the tested drugs (alone or in combination) is significantly higher than the measurements for control condition (no perturbation). P-values were FDR-corrected for multiple hypotheses testing and combined across different runs using Fisher’s method.
 
+The resulting boxplot for patient #3 is:
 
 ![boxplot patient 3](https://github.com/saezlab/BraDiPluS/blob/gh-pages/public/fig/boxplot_p3.jpg?raw=true)
+
+
+The resulting volcano plot for patient #3 is:
+
+![volcanoplot patient 3](https://github.com/saezlab/BraDiPluS/blob/gh-pages/public/fig/volcanoplot_p3.jpg?raw=true)
 
