@@ -121,14 +121,16 @@ setwd("path/to/fuguresFolder")
 res<-computeStatistics(exampleData, controlName="FS + FS", thPval=0.1, thSD=1.5, subsample=F, saveFiles=T)
 ```
 
-This will produce two figures called "boxplot.pdf" and "volcanoplot.pdf" and outputs a data.frame with the computed zscores and p-values for each sample and each patient/cell line, along with info about which samples are significant based on the used defined criteria. For each patient/cell line the z-score is computed separately for each run and then averaged. P-values are also computed separately for each run, using Wilcoxon rank sum test to verify if the response to the tested drugs (alone or in combination) is significantly higher than the measurements for control condition (no perturbation). P-values were FDR-corrected for multiple hypotheses testing and combined across different runs using Fisher’s method.
+This will produce two figures called "boxplot.pdf" and "volcanoplot.pdf" and outputs a data.frame with the computed zscores and p-values for each sample and each patient/cell line, along with info about which samples are significant based on the used defined criteria. For each patient/cell line the z-score is computed separately for each run and then averaged. P-values are also computed separately for each run, using Wilcoxon rank sum test to verify if the response to the tested drugs (alone or in combination) is significantly higher than the measurements for control condition (no perturbation). P-values were FDR-corrected for multiple hypotheses testing and combined across different runs using Fisher’s method. Optionally a threshold on the standard deviation (SD) of the distribution of the z-score for each sample can also be set, to further limit the analysis to samples with low variability across runs.
 
 The resulting boxplot for patient #3 is:
 
 ![boxplot patient 3](https://github.com/saezlab/BraDiPluS/blob/gh-pages/public/fig/boxplot_p3.jpg?raw=true)
 
+For each of the 62 samples the z-score for each run is plotted as a dot (we have 2 runs in this case, resulting in 2 dots for each sample) and the distribution of the z-scores across runs is shown as a boxplot for each sample (more meaningful when more than 2 runs available). The boxplots are coloured in green for perturbed conditions and in purple for the control (unperturbed) samples to visually assess if control samples are reasonably constant over time. Samples are considered significant when p-val < *thPval* and and SD < *thSD* (if *thSD* is defined, otherwise only thresold on p-value is considered).
 
 The resulting volcano plot for patient #3 is:
 
 ![volcanoplot patient 3](https://github.com/saezlab/BraDiPluS/blob/gh-pages/public/fig/volcanoplot_p3.jpg?raw=true)
 
+The z-score (avereage across runs) is plotted versus the -log10 of the p-value for the 62 samples (dots). In this case, all samples with z-score > 0 are also significantly different from the control condition.
