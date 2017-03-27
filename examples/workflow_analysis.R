@@ -6,4 +6,4 @@ res<-computeStatistics(allData, controlName="FS + FS", thPval=0.1, thSD=1.5, sub
 
 # compute and plot z-score for patient #3
 exampleData <- list(patient3=allData$patient3)
-res<-computeStatistics(exampleData, controlName="FS + FS", thPval=0.1, thSD=1.5, subsample=F, saveFiles=T)
+res<-computeStatistics(exampleData, controlName="FS + FS", thPval=0.1, thSD=1.5, subsample=F, saveFiles=T, showLabels=T)

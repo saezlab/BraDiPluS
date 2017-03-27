@@ -31,6 +31,7 @@
 #' @param subsample select TRUE to consider always (for all patient sample/cell line) the same number of runs when computing the combined p-value,
 #' this makes points in the volcano plot more comparable. FALSE all runs available are considered.
 #' @param saveFiles TRUE to save the plot as pdf. FALSE to plot it.
+#' @param showLabels TRUE to visualiza samples names.
 #' @importFrom survcomp combine.test
 #' @importFrom gridExtra grid.arrange
 #' @examples 
@@ -38,12 +39,15 @@
 #' allData<-list(patient3=allData[[5]])
 #' res<-computeStatistics(allData, controlName="FS + FS", thPval=0.1, thSD=1, subsample=F, saveFiles=T)
 #' @export
-computeStatistics <- function(allData, controlName="FS + FS", thPval=0.1, thSD=NA, subsample=F, saveFiles=F){
+computeStatistics <- function(allData, controlName="FS + FS", thPval=0.1, thSD=NA, subsample=F, saveFiles=F, showLabels=F){
   
   # library(survcomp)
   # library(ggrepel)
   library(ggplot2)
   library(gridExtra)
+  if (showLabels==T){
+    library(ggrepel)
+  }
   
   # minimum number of runs (for subsampling when computing combined p-value)
   minRuns<-min(sapply(allData, length))
@@ -141,6 +145,10 @@ computeStatistics <- function(allData, controlName="FS + FS", thPval=0.1, thSD=N
       theme_bw() + geom_hline(yintercept = -log10(0.1), linetype = "longdash", colour="#9e9e9e") +
       geom_vline(xintercept = 0, linetype = "longdash", colour="#9e9e9e")
     
+    if (showLabels==T){
+      g_vol<-g_vol+geom_text_repel(data=subset(dataVolcano, threshold=="Sign"), aes(x=zscore, y=-log10(pvalue), label=sample), show.legend = NA, inherit.aes = F)
+    }
+    
     return(list(g_vol=g_vol, g_box=g_box, dataVolcano=dataVolcano, dataBoxplot=dataBoxplot))
   })
   
@@ -191,6 +199,10 @@ computeStatistics <- function(allData, controlName="FS + FS", thPval=0.1, thSD=N
     geom_vline(xintercept = 0, linetype = "longdash", colour="#9e9e9e") +
     scale_colour_brewer(palette="Set2", name="")
 
+  if (showLabels==T){
+    gVolAll<-gVolAll+geom_text_repel(data=subset(allVolplot.df, threshold=="Sign"), aes(x=zscore, y=-log10(pvalue), label=sample), size = 3, col="grey60", show.legend = NA, inherit.aes = F) 
+  }
+  
   if (saveFiles==T){
     ggsave(gVolAll, file="volcanoplot.pdf", width = 6, height = 5)
   }else{

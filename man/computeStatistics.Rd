@@ -5,7 +5,7 @@
 \title{Compute and plot z-score and p-value.}
 \usage{
 computeStatistics(allData, controlName = "FS + FS", thPval = 0.1,
-  thSD = NA, subsample = F, saveFiles = F)
+  thSD = NA, subsample = F, saveFiles = F, showLabels = F)
 }
 \arguments{
 \item{allData}{list with one element for each patient sample/cell line, there must be at least 2 runs (i.e. full cycle)
@@ -22,6 +22,8 @@ is discarted based on this; can be set, e.g. to 1, to discart samples with high 
 this makes points in the volcano plot more comparable. FALSE all runs available are considered.}
 
 \item{saveFiles}{TRUE to save the plot as pdf. FALSE to plot it.}
+
+\item{showLabels}{TRUE to visualiza samples names.}
 }
 \description{
 \code{computeStatistics} compute and plot the z-score and the p-value for one or more patient sample/cell lines.

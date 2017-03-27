@@ -6,7 +6,7 @@ Date: 2016-22-09
 Author: F.Eduati
 Maintainer: F.Eduati <eduati@ebi.ac.uk>
 Depends: R (>= 3.0.2)
-Suggests: ggplot2, corrplot, survcomp
+Suggests: ggplot2, corrplot, survcomp, gridExtra, ggrepel
 biocViews: CellBasedAssays, CellBiology, Proteomics, Bioinformatics,
 Description: This package allows to analyse high-throughput microfluidic data of plugs or droplets generated using the braille display. Applied to the screening of drug combinations.
 License: GPL-3
