@@ -93,22 +93,22 @@ data("allData", package="BraDiPluS")
 Data are structured as a list 6 elements, one for each patient/cell line (type *names(allData)* to check the correspondig names). For example data for cell line BxPC3 can be accessed typing:
 
 ```R
-BxPC3_data <- allData$BxPC3
+BxPC3data <- allData$BxPC3
 ```
 
 For each cell line/patient data are also structured as a list with one run (i.e. full repetition of all 62 experimetal conditions) for each element of the list. Each run contains the peaks selected using functions *selectSamplesPeaks* and *qualityAssessment*.
 
-For example, we have 2 runs for patient3 which can be accessed as:
+For example, we have 2 runs for patient #3 which can be accessed as:
 
 ```R
-p3_data_run1<-allData$patient3$run_1
-p3_data_run2<-allData$patient3$run_2
+p3data_run1<-allData$patient3$run_1
+p3data_run2<-allData$patient3$run_2
 ```
 
 All runs for all patient/cell lines must have the same number of elements (which should correspond to the total number of experimental conditions, 62 in our case).
 
 
-We will consider patient3 to illustrate the usage of function *computeStatistics*.
+We will consider patient #3 to illustrate the usage of function *computeStatistics*.
 
 ```R
 exampleData <- list(patient2=allData$patient2)
@@ -119,5 +119,5 @@ res<-computeStatistics(exampleData, controlName="FS + FS", thPval=0.1, thSD=1.5,
 This will produce two figures called "boxplot.pdf" and "volcanoplot.pdf" 
 
 
-![boxplot patient 3](https://github.com/saezlab/BraDiPluS/blob/gh-pages/public/fig/boxplot_p3.jpg)
+![boxplot patient 3](https://github.com/saezlab/BraDiPluS/blob/gh-pages/public/fig/boxplot_p3.jpg?raw=true)
 
