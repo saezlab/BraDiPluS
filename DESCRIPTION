@@ -1,7 +1,7 @@
 Package: BraDiPluS
 Type: Package
 Title: BraDiPluS - Braille Display Plugs Data Analysis
-Version: 0.0.20
+Version: 0.0.21
 Date: 2016-22-09
 Author: F.Eduati
 Maintainer: F.Eduati <eduati@ebi.ac.uk>
