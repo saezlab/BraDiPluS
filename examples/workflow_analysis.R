@@ -1,4 +1,4 @@
-data("allData", package="BraDiPluS")
+data("allData_v2", package="BraDiPluS")
 setwd("/Users/eduati/BraDiPluS/fig/")
 
 # compute and plot z-score for all cell line and patient samples 
