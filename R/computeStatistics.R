@@ -157,13 +157,13 @@ computeStatistics <- function(allData, controlName="FS + FS", thPval=0.1, thSD=N
     }
     
     is.control<- as.factor(dataHeatmap$sample==controlName)
-    diag(dataHeatmap.m.zscore)<- -0.01
+    diag(dataHeatmap.m.zscore)<--2
     dataHeatmap.m.zscore["FS", "FS"]<-median(dataHeatmap[is.control==T,"zscore"])
-    # dataHeatmap.m.pval["FS", "FS"]<-0
+    
     
     # to consider non significant also those with z-score<0
-    diag(dataHeatmap.m.pval)<-0
     dataHeatmap.m.pval[dataHeatmap.m.zscore<=0]<-1
+    diag(dataHeatmap.m.pval)<-0
     
     ######
     # prepare for volcano plot
@@ -205,8 +205,8 @@ computeStatistics <- function(allData, controlName="FS + FS", thPval=0.1, thSD=N
     tmp.zscore<-res[[x]]$dataHeatmap.m.zscore
     tmp.zscore[tmp.zscore<cl.lim[1]]<-cl.lim[1]
     tmp.zscore[tmp.zscore>cl.lim[2]]<-cl.lim[2]
-    corrplot(tmp.zscore, insig="pch", pch="x", pch.cex=1, is.corr = F,  method="color", na.label = "o", cl.length=10, title = x,
-             p.mat = res[[x]]$dataHeatmap.m.pval, sig.level=thPval, col=cols, cl.lim=c(-2,2.5), tl.col="black", addgrid.col="grey80", cl.align.text="l")
+    corrplot(tmp.zscore, insig="pch", pch="x", pch.cex=1, is.corr = F,  method ="color", na.label = "o", cl.length=10, title = x, type="upper",
+             p.mat = res[[x]]$dataHeatmap.m.pval, sig.level=thPval, col=cols, cl.lim=c(-2,2.5), tl.col="black", addgrid.col="white", cl.align.text="l")
   }
   
   if (saveFiles==T){
