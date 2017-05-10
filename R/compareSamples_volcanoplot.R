@@ -24,16 +24,14 @@
 #' @param controlName name of the control sample, default is "FS+FS"
 #' @param thPval threshold on the p-value to be considered significant
 #' @param thEffectSize threshold on the effect size
-#' @param parametric TRUE to use parametric tests (t-test if 2 samples, ANOVA if more samples), FALSE to use non parametric
-#' tests (Wilcoxon rank sum test if 2 samples, Kruskal-Wallis rank sum test if more than 2 samples).
 #' @importFrom lsr cohensD
 #' @examples 
 #' data("allData", package="BraDiPluS")
-#' allData<-list(patient3=allData[[5]])
+#' allData<-allData[c(1,2)]
 #' res<-compareSamples(allData, controlName="FS + FS")
 #' @export
 #' 
-compareSamples_volcanoplot <- function(allData, controlName="FS + FS", thPval=0.1, thEffectSize=0.3, parametric=T){
+compareSamples_volcanoplot <- function(allData, controlName="FS + FS", thPval=0.1, thEffectSize=0.3){
   
   library(ggplot2)
   library(ggrepel)
@@ -83,6 +81,9 @@ compareSamples_volcanoplot <- function(allData, controlName="FS + FS", thPval=0.
     tmp<-subset(allData.df, ID==x)
     
     ## tests for 2 groups (cell line/patient)
+    parametric=T # for now only parametric test implemented: ToDo add non parametric and set this as argument with:
+    #' TRUE to use parametric tests (t-test if 2 samples, ANOVA if more samples), FALSE to use non parametric
+    #' #' tests (Wilcoxon rank sum test if 2 samples, Kruskal-Wallis rank sum test if more than 2 samples).
     if (length(allData)==2){
       if (parametric==T){  # t-test
         p.val = t.test(values ~ patientCellLine, data=tmp)$p.value
