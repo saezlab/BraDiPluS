@@ -197,6 +197,8 @@ computeStatistics <- function(allData, controlName="FS + FS", thPval=0.1, thSD=N
   if (saveFiles==T){
     pdf("heatmap.pdf",width=4*length(allData), height=4,paper='special') 
     par(mfrow=c(1, length(res)))
+  }else{
+    par(mfrow=c(1, length(res)))
   }
   
   cl.lim<-c(-2,2.5)
@@ -212,7 +214,7 @@ computeStatistics <- function(allData, controlName="FS + FS", thPval=0.1, thSD=N
   if (saveFiles==T){
     dev.off()
   }else{
-    readline("press Enter to continue...")
+    readline("Showing the heatmap. Press Enter to continue...")
   }
   
   
@@ -244,7 +246,7 @@ computeStatistics <- function(allData, controlName="FS + FS", thPval=0.1, thSD=N
     ggsave(gBoxAll, file="boxplot.pdf", width = 12, height = 4*length(res))
   }else{
     print(gBoxAll)
-    readline("press Enter to continue...")
+    readline("Showing the boxplot. Press Enter to continue...")
   }
   
   
@@ -272,7 +274,8 @@ computeStatistics <- function(allData, controlName="FS + FS", thPval=0.1, thSD=N
   if (saveFiles==T){
     ggsave(gVolAll, file="volcanoplot.pdf", width = 6, height = 5)
   }else{
-    gVolAll
+    print(gVolAll)
+    readline("Showing the volcano plot.")
   }
   
 
