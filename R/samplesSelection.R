@@ -22,7 +22,7 @@
 #' (defined by "BCminLength" argument). Then it looks at the space between selected blue peaks and considers as samples those
 #' with a distance higher than a threshold (defined by "distThr").
 #' 
-#' @param data data to be analyzed (formatted as data.frame with 4 columns: green, orange, blue, time)}
+#' @param data data to be analyzed (formatted as data.frame with 4 columns: green, orange, blue, time)
 #' @param channel channel(s) to be visualized, which is in general the main channel with the data. Default="green"
 #' @param BCchannel channel used for barcoding, default is "blue"
 #' @param BCthr threshold used in order to define what is a peak in the barcoding channel. Default is 0.05
