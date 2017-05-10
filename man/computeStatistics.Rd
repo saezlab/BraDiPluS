@@ -26,7 +26,7 @@ this makes points in the volcano plot more comparable. FALSE all runs available 
 \item{showLabels}{TRUE to visualiza samples names.}
 }
 \description{
-\code{computeStatistics} compute and plot the z-score and the p-value for one or more patient sample/cell lines.
+\code{computeStatistics} compute and plot z-score and p-value for one or more patient sample/cell lines.
 }
 \details{
 This function computes the z-score and the p-values for all patient samples/cell lines provided as argument. For each 

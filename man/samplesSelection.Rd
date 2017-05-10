@@ -9,6 +9,8 @@ samplesSelection(data, channel = "green", BCchannel = "blue",
   barcodePos = "after")
 }
 \arguments{
+\item{data}{data to be analyzed (formatted as data.frame with 4 columns: green, orange, blue, time)}
+
 \item{channel}{channel(s) to be visualized, which is in general the main channel with the data. Default="green"}
 
 \item{BCchannel}{channel used for barcoding, default is "blue"}
