@@ -51,6 +51,7 @@ computeStatistics <- function(allData, controlName="FS + FS", thPval=0.1, thSD=N
   if (showLabels==T){
     library(ggrepel)
   }
+  library(reshape2)
   
   # minimum number of runs (for subsampling when computing combined p-value)
   minRuns<-min(sapply(allData, length))
@@ -173,6 +174,19 @@ computeStatistics <- function(allData, controlName="FS + FS", thPval=0.1, thSD=N
     dataVolcano$threshold = as.numeric(as.factor(dataVolcano$pvalue <= thPval & dataVolcano$zscore >0))
     dataVolcano$threshold<-factor(dataVolcano$threshold, levels = c(1,2), labels = c("notSign", "Sign"))
     
+    ######
+    # prepare for volcano plot
+    runs_zscore.melted<-melt(runs_zscore)
+    runs_pvalue.melted<-melt(runs_pvalue)
+    
+    
+    dataVolcano2<-data.frame(zscore=runs_zscore.melted$value, pvalue=runs_pvalue.melted$value, sample=runs_pvalue.melted$Var1, run=runs_pvalue.melted$Var2)
+    # dataVolcano$pvalue<-p.adjust(dataVolcano$pvalue, method = "BH")
+    
+    dataVolcano2$threshold = as.numeric(as.factor(dataVolcano2$pvalue <= thPval & dataVolcano2$zscore >0))
+    dataVolcano2$threshold<-factor(dataVolcano2$threshold, levels = c(1,2), labels = c("notSign", "Sign"))
+    
+    
     
     # g_vol = ggplot(data=dataVolcano, aes(x=zscore, y=-log10(pvalue), colour=threshold, size=10), environment = environment()) +
     #   geom_point(alpha=1) +   theme(legend.position="none") +
@@ -188,7 +202,7 @@ computeStatistics <- function(allData, controlName="FS + FS", thPval=0.1, thSD=N
     # }
     # 
     # return(list(g_vol=g_vol, g_box=g_box, dataVolcano=dataVolcano, dataBoxplot=dataBoxplot))
-    return(list(dataVolcano=dataVolcano, dataBoxplot=dataBoxplot, dataHeatmap.m.pval=dataHeatmap.m.pval, dataHeatmap.m.zscore=dataHeatmap.m.zscore))
+    return(list(dataVolcano=dataVolcano, dataVolcano2=dataVolcano2, dataBoxplot=dataBoxplot, dataHeatmap.m.pval=dataHeatmap.m.pval, dataHeatmap.m.zscore=dataHeatmap.m.zscore))
   })
   
 
@@ -260,6 +274,30 @@ computeStatistics <- function(allData, controlName="FS + FS", thPval=0.1, thSD=N
     return(tmp)
   }))
   
+  allVolplot2.df<-do.call(rbind, lapply(names(res), function(x){
+    tmp<-res[[x]]$dataVolcano2
+    tmp$patientCellLine=x
+    return(tmp)
+  }))
+  
+  gVolAll2 = ggplot(data=allVolplot2.df, aes(x=zscore, y=-log10(pvalue), colour=patientCellLine), size=5, environment = environment()) +
+    geom_point(alpha=1) +
+    xlab("z-score") + ylab("-log10 p-value") + ggtitle("") +
+    theme_bw() + geom_hline(yintercept = -log10(0.1), linetype = "longdash", colour="#9e9e9e") +
+    geom_vline(xintercept = 0, linetype = "longdash", colour="#9e9e9e") +
+    scale_colour_brewer(palette="Set2", name="")
+  
+  # source("/Users/eduati/BraDiPluS/R/zz/marginal_plot.R")
+  # gVolAll2 + marginal_plot(x = allVolplot2.df$zscore, y = -log10(allVolplot2.df$pvalue),
+  #                          group = allVolplot2.df$patientCellLine)
+  
+  if (saveFiles==T){
+    ggsave(gVolAll2, file="volcanoplot_allRuns.pdf", width = 6, height = 5)
+  }else{
+    print(gVolAll2)
+    readline("Showing the volcano plot for all samples and all runs.")
+  }
+  
   gVolAll = ggplot(data=allVolplot.df, aes(x=zscore, y=-log10(pvalue), colour=patientCellLine), size=5, environment = environment()) +
     geom_point(alpha=1) +
     xlab("z-score") + ylab("-log10 p-value") + ggtitle("") +
@@ -272,7 +310,7 @@ computeStatistics <- function(allData, controlName="FS + FS", thPval=0.1, thSD=N
   }
   
   if (saveFiles==T){
-    ggsave(gVolAll, file="volcanoplot.pdf", width = 6, height = 5)
+    ggsave(gVolAll, file="volcanoplot_combinedRuns.pdf", width = 6, height = 5)
   }else{
     print(gVolAll)
     readline("Showing the volcano plot.")
