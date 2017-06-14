@@ -125,7 +125,7 @@ compareSamples_barplot <- function(allData, controlName="FS + FS", thPval=0.05, 
   res_all<-res
   
   # if I want to plot only the significant ones
-  res<-subset(res, is.signif.comparison==T)
+  res<-subset(res, is.signif.comparison==T) # comment this to show also non significant comparisons
   if (!is.null(res_stats)){ # if info available consider only significant conditions for each cell line/patient
     res<-subset(res, is.signif.condition=="Sign")
   }
@@ -149,6 +149,15 @@ compareSamples_barplot <- function(allData, controlName="FS + FS", thPval=0.05, 
       ylab("z-score") + xlab("promising\nconditions") + ggtitle(x) +
       expand_limits(y=0) +
       coord_flip() + theme_bw() + geom_hline(yintercept = 0, linetype = "longdash", colour="#9e9e9e")
+
+    ## this to show different colour for significant and not (only if I am plotting also non significant comparisons)   
+    # gg <- ggplot(tmp, aes(x=reorder(names, medianValue), y=medianValue, col=is.signif.comparison)) + 
+    #   geom_point(size=3) + 
+    #   geom_segment(aes(xend=reorder(names, medianValue)), yend=0) +
+    #   ylab("z-score") + xlab("promising\nconditions") + ggtitle(x) +
+    #   expand_limits(y=0) +
+    #   coord_flip() + theme_bw() + geom_hline(yintercept = 0, linetype = "longdash", colour="#9e9e9e")
+    # 
     
     return(gg)  
   })
