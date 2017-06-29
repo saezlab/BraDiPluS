@@ -245,11 +245,13 @@ computeStatistics <- function(allData, controlName="FS + FS", thPval=0.1, thSD=N
     tmp$patientCellLine=x
     return(tmp)
   }))
-
+  
+  allBoxplot.df$patientCellLine<-factor(allBoxplot.df$patientCellLine, levels = names(res), labels = names(res) , ordered=T)
+  
   gBoxAll <- ggplot(allBoxplot.df, aes(x=ID, y=values, colour=is.significant, fill=is.control)) + geom_hline(yintercept=0, colour="grey70") +
     geom_boxplot(outlier.colour=NA) + 
     geom_point(position = position_jitter(width = 0.2)) + theme_bw() +
-    scale_y_continuous(sec.axis = dup_axis(name = waiver())) +
+    # scale_y_continuous(sec.axis = dup_axis(name = waiver())) +
     ylab("z-score") + xlab("") +
     scale_x_discrete(breaks = as.numeric(levels(allBoxplot.df$ID)), labels = allBoxplot.df$names[as.numeric(levels(allBoxplot.df$ID))]) +
     theme(axis.text.x=element_text(angle = -45, hjust = 0), legend.position = "top") +
