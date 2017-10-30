@@ -259,7 +259,8 @@ computeStatistics <- function(allData, controlName="FS + FS", thPval=0.1, thSD=N
     scale_fill_brewer(palette="Accent", name="        ", breaks=levels(allBoxplot.df$is.control), labels=c("drug response sample\n(single drug or pairwise combination)", "control sample\n(only FreeStyle medium, no drugs)")) +
     facet_grid(patientCellLine ~ .)
   if (saveFiles==T){
-    ggsave(gBoxAll, file="boxplot.pdf", width = 12, height = 4*length(res))
+    # ggsave(gBoxAll, file="boxplot.pdf", width = 12, height = 4*length(res))
+    ggsave(gBoxAll, file="boxplot.pdf", width = 8, height = 2*length(res))
   }else{
     print(gBoxAll)
     readline("Showing the boxplot. Press Enter to continue...")
