@@ -39,15 +39,19 @@
 #' allData<-list(patient3=allData[[5]])
 #' res<-computeStatistics(allData, controlName="FS + FS", thPval=0.1, thSD=1, subsample=F, saveFiles=T)
 #' @export
+#' 
 computeStatistics <- function(allData, controlName="FS + FS", thPval=0.1, thSD=NA, subsample=F, saveFiles=F, showLabels=F){
   
   # library(survcomp)
   # library(ggrepel)
+  library(corrplot)
   library(ggplot2)
   library(gridExtra)
+  library(corrplot) # note: this uses a slightly modified version of corrplot package (to handle NAs)
   if (showLabels==T){
     library(ggrepel)
   }
+  library(reshape2)
   
   # minimum number of runs (for subsampling when computing combined p-value)
   minRuns<-min(sapply(allData, length))
@@ -71,6 +75,8 @@ computeStatistics <- function(allData, controlName="FS + FS", thPval=0.1, thSD=N
           return(NA)
         }
       })
+      thePval<-p.adjust(thePval, "BH")
+      return(thePval)
     }))
     # combine p-values
     runs_pvalue_combined<-apply(runs_pvalue, 1, function(x){
@@ -105,6 +111,7 @@ computeStatistics <- function(allData, controlName="FS + FS", thPval=0.1, thSD=N
     runs_zscore_median_rm<-runs_zscore_median[-ix_remove]
     runs_pvalue_combined_rm<-runs_pvalue_combined[-ix_remove]
     
+    ######
     # prepare for boxplot
     is.significant<-as.factor(runs_zscore_median>0 & runs_pvalue_combined <= thPval)
     is.significant[ix_highSD]<-FALSE
@@ -117,40 +124,118 @@ computeStatistics <- function(allData, controlName="FS + FS", thPval=0.1, thSD=N
                             is.significant=rep(is.significant, nRuns),
                             is.control=rep(is.control, nRuns))
     
-    g_box <- ggplot(dataBoxplot, aes(x=ID, y=values, colour=is.significant, fill=is.control)) + geom_hline(yintercept=0, colour="grey70") +
-      geom_boxplot(outlier.colour=NA) + 
-      geom_point(position = position_jitter(width = 0.2)) + theme_bw() +
-      scale_y_continuous(sec.axis = dup_axis(name = waiver())) +
-      ylab("z-score") + xlab("") +
-      scale_x_discrete(breaks = factor(seq(1:nrow(runs_zscore))), labels = names(is.significant)) +
-      theme(axis.text.x=element_text(angle = -45, hjust = 0), legend.position = "top") +
-      scale_colour_manual(values = c("grey80", "grey40"), name="", breaks=levels(is.significant), labels=c("not significant", "significant")) +
-      scale_fill_brewer(palette="Accent", name="        ", breaks=levels(is.control), labels=c("drug response sample\n(single drug or pairwise combination)", "control sample\n(only FreeStyle medium, no drugs)"))
+    # g_box <- ggplot(dataBoxplot, aes(x=ID, y=values, colour=is.significant, fill=is.control)) + geom_hline(yintercept=0, colour="grey70") +
+    #   geom_boxplot(outlier.colour=NA) + 
+    #   geom_point(position = position_jitter(width = 0.2)) + theme_bw() +
+    #   scale_y_continuous(sec.axis = dup_axis(name = waiver())) +
+    #   ylab("z-score") + xlab("") +
+    #   scale_x_discrete(breaks = factor(seq(1:nrow(runs_zscore))), labels = names(is.significant)) +
+    #   theme(axis.text.x=element_text(angle = -45, hjust = 0), legend.position = "top") +
+    #   scale_colour_manual(values = c("grey80", "grey40"), name="", breaks=levels(is.significant), labels=c("not significant", "significant")) +
+    #   scale_fill_brewer(palette="Accent", name="        ", breaks=levels(is.control), labels=c("drug response sample\n(single drug or pairwise combination)", "control sample\n(only FreeStyle medium, no drugs)"))
 
+    ######
+    # prepare for heatmap
+    dataHeatmap<-data.frame(sample=samplesNames, zscore=runs_zscore_median, pvalue=runs_pvalue_combined)
+    perturbations<-do.call(rbind, lapply(as.character(dataHeatmap$sample), function(theName){
+      strsplit(theName, split = " \\+ ")[[1]]
+    }))
+    dataHeatmap<-cbind(perturbations, dataHeatmap, stringsAsFactors=FALSE)
     
+    allCompounds<-unique(do.call(c, lapply(as.character(dataHeatmap$sample), function(theName){
+      strsplit(theName, split = " \\+ ")[[1]]
+    })))
+    allCompounds[2:length(allCompounds)]<-sort(allCompounds[2:length(allCompounds)])
+    
+    dataHeatmap.m.zscore<-matrix(NA, nrow=length(allCompounds), ncol=length(allCompounds))
+    colnames(dataHeatmap.m.zscore)<-rownames(dataHeatmap.m.zscore)<-allCompounds
+    dataHeatmap.m.pval<-dataHeatmap.m.zscore
+    
+    for (i in 1:nrow(dataHeatmap)){
+      # cat(dataHeatmap[i,1], dataHeatmap[i,2], "\n")
+      dataHeatmap.m.zscore[dataHeatmap[i,1], dataHeatmap[i,2]]<-dataHeatmap.m.zscore[dataHeatmap[i,2], dataHeatmap[i,1]]<-dataHeatmap[i,"zscore"]
+      dataHeatmap.m.pval[dataHeatmap[i,1], dataHeatmap[i,2]]<-dataHeatmap.m.pval[dataHeatmap[i,2], dataHeatmap[i,1]]<-dataHeatmap[i,"pvalue"]
+    }
+    
+    is.control<- as.factor(dataHeatmap$sample==controlName)
+    diag(dataHeatmap.m.zscore)<--2
+    dataHeatmap.m.zscore["FS", "FS"]<-median(dataHeatmap[is.control==T,"zscore"])
+    
+    
+    # to consider non significant also those with z-score<0
+    dataHeatmap.m.pval[dataHeatmap.m.zscore<=0]<-1
+    diag(dataHeatmap.m.pval)<-0
+    
+    ######
     # prepare for volcano plot
     dataVolcano<-data.frame(zscore=runs_zscore_median_rm, pvalue=runs_pvalue_combined_rm, sample=names(runs_pvalue_combined_rm))
-    dataVolcano$pvalue<-p.adjust(dataVolcano$pvalue, method = "BH")
+    # dataVolcano$pvalue<-p.adjust(dataVolcano$pvalue, method = "BH")
     
     dataVolcano$threshold = as.numeric(as.factor(dataVolcano$pvalue <= thPval & dataVolcano$zscore >0))
     dataVolcano$threshold<-factor(dataVolcano$threshold, levels = c(1,2), labels = c("notSign", "Sign"))
     
+    ######
+    # prepare for volcano plot
+    runs_zscore.melted<-melt(runs_zscore)
+    runs_pvalue.melted<-melt(runs_pvalue)
     
-    g_vol = ggplot(data=dataVolcano, aes(x=zscore, y=-log10(pvalue), colour=threshold, size=10), environment = environment()) +
-      geom_point(alpha=1) +   theme(legend.position="none") +
-      theme(legend.position = "none") +
-      # xlim(c(-2.8, 2.8)) + ylim(c(0, 2.6)) +
-      xlab("effect size") + ylab("-log10 p-value") + ggtitle("") +
-      scale_colour_manual(values = c("notSign" = "#ededed", "Sign" = "#74d600")) +
-      theme_bw() + geom_hline(yintercept = -log10(0.1), linetype = "longdash", colour="#9e9e9e") +
-      geom_vline(xintercept = 0, linetype = "longdash", colour="#9e9e9e")
     
-    if (showLabels==T){
-      g_vol<-g_vol+geom_text_repel(data=subset(dataVolcano, threshold=="Sign"), aes(x=zscore, y=-log10(pvalue), label=sample), show.legend = NA, inherit.aes = F)
-    }
+    dataVolcano2<-data.frame(zscore=runs_zscore.melted$value, pvalue=runs_pvalue.melted$value, sample=runs_pvalue.melted$Var1, run=runs_pvalue.melted$Var2)
+    # dataVolcano$pvalue<-p.adjust(dataVolcano$pvalue, method = "BH")
     
-    return(list(g_vol=g_vol, g_box=g_box, dataVolcano=dataVolcano, dataBoxplot=dataBoxplot))
+    dataVolcano2$threshold = as.numeric(as.factor(dataVolcano2$pvalue <= thPval & dataVolcano2$zscore >0))
+    dataVolcano2$threshold<-factor(dataVolcano2$threshold, levels = c(1,2), labels = c("notSign", "Sign"))
+    
+    
+    
+    # g_vol = ggplot(data=dataVolcano, aes(x=zscore, y=-log10(pvalue), colour=threshold, size=10), environment = environment()) +
+    #   geom_point(alpha=1) +   theme(legend.position="none") +
+    #   theme(legend.position = "none") +
+    #   # xlim(c(-2.8, 2.8)) + ylim(c(0, 2.6)) +
+    #   xlab("effect size") + ylab("-log10 p-value") + ggtitle("") +
+    #   scale_colour_manual(values = c("notSign" = "#ededed", "Sign" = "#74d600")) +
+    #   theme_bw() + geom_hline(yintercept = -log10(0.1), linetype = "longdash", colour="#9e9e9e") +
+    #   geom_vline(xintercept = 0, linetype = "longdash", colour="#9e9e9e")
+    # 
+    # if (showLabels==T){
+    #   g_vol<-g_vol+geom_text_repel(data=subset(dataVolcano, threshold=="Sign"), aes(x=zscore, y=-log10(pvalue), label=sample), show.legend = NA, inherit.aes = F)
+    # }
+    # 
+    # return(list(g_vol=g_vol, g_box=g_box, dataVolcano=dataVolcano, dataBoxplot=dataBoxplot))
+    return(list(dataVolcano=dataVolcano, dataVolcano2=dataVolcano2, dataBoxplot=dataBoxplot, dataHeatmap.m.pval=dataHeatmap.m.pval, dataHeatmap.m.zscore=dataHeatmap.m.zscore))
   })
+  
+
+  ###
+  # overall heatmap
+  if (saveFiles==T){
+    pdf("heatmap.pdf",width=4*length(allData), height=4,paper='special') 
+    par(mfrow=c(1, length(res)))
+  }else{
+    par(mfrow=c(1, length(res)))
+  }
+  
+  cl.lim<-c(-2,2.5)
+  cols<-colorRampPalette(c("grey60", "grey70", "grey80", '#FFFFFF', '#DB949D', "#B61126", '#b20319'))(20)
+  for (x in names(res)){
+    tmp.zscore<-res[[x]]$dataHeatmap.m.zscore
+    tmp.zscore[tmp.zscore<cl.lim[1]]<-cl.lim[1]
+    tmp.zscore[tmp.zscore>cl.lim[2]]<-cl.lim[2]
+    corrplot(tmp.zscore, insig="pch", pch="x", pch.cex=1, is.corr = F,  method ="color", na.label = "o", cl.length=10, title = x, type="upper",
+             p.mat = res[[x]]$dataHeatmap.m.pval, sig.level=thPval, col=cols, cl.lim=c(-2,2.5), tl.col="black", addgrid.col="white", cl.align.text="l")
+  }
+  
+  if (saveFiles==T){
+    dev.off()
+  }else{
+    readline("Showing the heatmap. Press Enter to continue...")
+  }
+  
+  
+  
+  
+  
+  
   
   ###
   # overall boxplot
@@ -160,11 +245,13 @@ computeStatistics <- function(allData, controlName="FS + FS", thPval=0.1, thSD=N
     tmp$patientCellLine=x
     return(tmp)
   }))
-
+  
+  allBoxplot.df$patientCellLine<-factor(allBoxplot.df$patientCellLine, levels = names(res), labels = names(res) , ordered=T)
+  
   gBoxAll <- ggplot(allBoxplot.df, aes(x=ID, y=values, colour=is.significant, fill=is.control)) + geom_hline(yintercept=0, colour="grey70") +
     geom_boxplot(outlier.colour=NA) + 
     geom_point(position = position_jitter(width = 0.2)) + theme_bw() +
-    scale_y_continuous(sec.axis = dup_axis(name = waiver())) +
+    # scale_y_continuous(sec.axis = dup_axis(name = waiver())) +
     ylab("z-score") + xlab("") +
     scale_x_discrete(breaks = as.numeric(levels(allBoxplot.df$ID)), labels = allBoxplot.df$names[as.numeric(levels(allBoxplot.df$ID))]) +
     theme(axis.text.x=element_text(angle = -45, hjust = 0), legend.position = "top") +
@@ -172,16 +259,14 @@ computeStatistics <- function(allData, controlName="FS + FS", thPval=0.1, thSD=N
     scale_fill_brewer(palette="Accent", name="        ", breaks=levels(allBoxplot.df$is.control), labels=c("drug response sample\n(single drug or pairwise combination)", "control sample\n(only FreeStyle medium, no drugs)")) +
     facet_grid(patientCellLine ~ .)
   if (saveFiles==T){
-    ggsave(gBoxAll, file="boxplot.pdf", width = 12, height = 4*length(res))
+    # ggsave(gBoxAll, file="boxplot.pdf", width = 12, height = 4*length(res))
+    ggsave(gBoxAll, file="boxplot.pdf", width = 8, height = 2*length(res))
   }else{
-    gBoxAll
-    readline("press Enter to continue...")
+    print(gBoxAll)
+    readline("Showing the boxplot. Press Enter to continue...")
   }
   
   
-  # g_box_All<-lapply(res, function(xx){xx$g_box})
-  # do.call("gridExtra::grid.arrange", c(g_box_All, nrow=length(g_box_All)))
-  # 
   
   ###
   # overall volcano plot
@@ -191,6 +276,30 @@ computeStatistics <- function(allData, controlName="FS + FS", thPval=0.1, thSD=N
     tmp$patientCellLine=x
     return(tmp)
   }))
+  
+  allVolplot2.df<-do.call(rbind, lapply(names(res), function(x){
+    tmp<-res[[x]]$dataVolcano2
+    tmp$patientCellLine=x
+    return(tmp)
+  }))
+  
+  gVolAll2 = ggplot(data=allVolplot2.df, aes(x=zscore, y=-log10(pvalue), colour=patientCellLine), size=5, environment = environment()) +
+    geom_point(alpha=1) +
+    xlab("z-score") + ylab("-log10 p-value") + ggtitle("") +
+    theme_bw() + geom_hline(yintercept = -log10(0.1), linetype = "longdash", colour="#9e9e9e") +
+    geom_vline(xintercept = 0, linetype = "longdash", colour="#9e9e9e") +
+    scale_colour_brewer(palette="Set2", name="")
+  
+  # source("/Users/eduati/BraDiPluS/R/zz/marginal_plot.R")
+  # gVolAll2 + marginal_plot(x = allVolplot2.df$zscore, y = -log10(allVolplot2.df$pvalue),
+  #                          group = allVolplot2.df$patientCellLine)
+  
+  if (saveFiles==T){
+    ggsave(gVolAll2, file="volcanoplot_allRuns.pdf", width = 6, height = 5)
+  }else{
+    print(gVolAll2)
+    readline("Showing the volcano plot for all samples and all runs.")
+  }
   
   gVolAll = ggplot(data=allVolplot.df, aes(x=zscore, y=-log10(pvalue), colour=patientCellLine), size=5, environment = environment()) +
     geom_point(alpha=1) +
@@ -204,10 +313,13 @@ computeStatistics <- function(allData, controlName="FS + FS", thPval=0.1, thSD=N
   }
   
   if (saveFiles==T){
-    ggsave(gVolAll, file="volcanoplot.pdf", width = 6, height = 5)
+    ggsave(gVolAll, file="volcanoplot_combinedRuns.pdf", width = 6, height = 5)
   }else{
-    gVolAll
+    print(gVolAll)
+    readline("Showing the volcano plot.")
   }
+  
+
   
   return(allVolplot.df)
   # return(list(myVolcanoPlot=gVolAll, myBoxPlot=gBoxAll, dataVolcano=allVolplot.df, dataBoxplot=allBoxplot.df))
