@@ -1,17 +1,54 @@
-## indetify splitted plugs
-# INPUT:
-# data => data to be analyzed (formatted as data.frame with 4 columns: green, orange, blue, time)
-# channel => channel to be considered, default="green"
-# metric => metric to be used, selct among "median", "mean", "max" or "AUC", default is median
-# Nchannel => channel to be used to normalise data, default is NA
-# baseThr => threshold on the baseline used in order to define what is a peak, default is 0.01
-# minLength => minimum length of a plug/droplet in number of data points, default is 10 (data points, not seconds)
-# discartPeaks => select if to discart first and/or last peak ("first" discart the first, "last" discart the last, "both" discart both), default is NA
-# discartPeaksPerc => select the percentage of peaks to discart if discartPeaks is defined. Default is 1.
-# OUTPUT:
-# peaks  => data.frame containing max, mean, sd (standard deviation), start and length of all peaks
+#
+#  This file is part of the `BraDiPluS` R package
+#
+#  Copyright (c) 2016 EMBL-EBI
+#
+#  File author(s): Federica Eduati (federica.eduati@gmail.com)
+#
+#  Distributed under the GPLv3 License.
+#  See accompanying file LICENSE.txt or copy at
+#      http://www.gnu.org/licenses/gpl-3.0.html
+#
+#  Website: https://github.com/saezlab/BraDiPluS
+# --------------------------------------------------------
+#
+#' Select fluorescence peaks.
+#' 
+#' \code{peaksSelection} allows to identify peaks for the defined channel.
+#' 
+#' This function reads the data produced with labview in the 3 channels (green, orange and blue)
+#' and selects the peaks corresponding to the plugs in the user defined channel. This is done by considering
+#' as peaks the signal that goes above a threshold (defined by argument "baseThr") and stays above for a minimum number
+#' of data points (defined by argument "minLength").
+#' 
+#' @param data data to be analyzed (formatted as data.frame with 4 columns: green, orange, blue, time)
+#' @param channel channel to be considered, default="green"
+#' @param metric metric to be used to define the value to assign to each peak, select among "median", "mean",
+#' "max" or "AUC", default is "median"
+#' @param Nchannel channel to be used to normalise data, default is NA (raccomended to not use it)
+#' @param baseThr threshold on the baseline used in order to define what is a peak, default is 0.01
+#' @param minLength minimum length of a plug/droplet in number of data points, default is 10 (note that unit is
+#' number of data points, not seconds)
+#' @param discartPeaks select of to discart first and/or last peak ("first" discart the first, "last" discart the last,
+#' "both" discart both), default is NA
+#' @param discartPeaksPerc select the percentage of peaks to discart if discartPeaks is defined. Default is 1
+#' @return This function returns a data.frame with one peak for each row and 9 columns:
+#' \describe{
+#'   \item{green}{value of the peak in the green channel}
+#'   \item{orange}{value of the peak in the orange channel}
+#'   \item{blue}{value of the peak in the blue channel}
+#'   \item{norm}{value of the selected channel normalized by the value of the Nchannel, if the Nchannel is provided (otherwise the value is set to 0)}
+#'   \item{start}{starting point of the peak}
+#'   \item{end}{final point of the peak}
+#'   \item{length}{length of the peak}
+#' }
+#' @seealso \code{\link{plotData}}
+#' @examples 
+#' data(BxPC3_data,package="BraDiPluS")
+#' peaks <- peaksSelection(data=MyData, channel="blue")
+#' @export
 
-peaksSelection <- function(data, channel="green", metric="median", Nchannel=NA, baseThr=0.01, minLength=10, discartPeaks=NA, discartPeaksPerc=1, Cchannel=NA){
+peaksSelection <- function(data, channel="green", metric="median", Nchannel=NA, baseThr=0.01, minLength=10, discartPeaks=NA, discartPeaksPerc=1){
   
   # consider only data for the desired channel
   x<-as.matrix(data[,channel])
@@ -131,20 +168,21 @@ peaksSelection <- function(data, channel="green", metric="median", Nchannel=NA, 
       #   }
       
       
+      ## MOVED TO qualityAssessment.R
       ### remove outliers using the control channel (e.g. blue)
-      if (!is.na(Cchannel)){
-        lowerq = quantile(get(Cchannel, peaks))[2]
-        upperq = quantile(get(Cchannel, peaks))[4]
-        iqr = upperq - lowerq #Or use IQR(data)
-        #mild.threshold.upper = (iqr * 1.5) + upperq
-        #mild.threshold.lower = lowerq - (iqr * 1.5)
-        extreme.threshold.upper = (iqr * 3) + upperq
-        extreme.threshold.lower = lowerq - (iqr * 3)
-        
-        ixOut<-which((get(Cchannel, peaks))>extreme.threshold.upper | (get(Cchannel, peaks))<extreme.threshold.lower)
-        if (length(ixOut)>0){peaks <- peaks[-ixOut,]}
-        
-      }
+      # if (!is.na(Cchannel)){
+      #   lowerq = quantile(get(Cchannel, peaks))[2]
+      #   upperq = quantile(get(Cchannel, peaks))[4]
+      #   iqr = upperq - lowerq #Or use IQR(data)
+      #   #mild.threshold.upper = (iqr * 1.5) + upperq
+      #   #mild.threshold.lower = lowerq - (iqr * 1.5)
+      #   extreme.threshold.upper = (iqr * 3) + upperq
+      #   extreme.threshold.lower = lowerq - (iqr * 3)
+      #   
+      #   ixOut<-which((get(Cchannel, peaks))>extreme.threshold.upper | (get(Cchannel, peaks))<extreme.threshold.lower)
+      #   if (length(ixOut)>0){peaks <- peaks[-ixOut,]}
+      #   
+      # }
     }
   }
   
