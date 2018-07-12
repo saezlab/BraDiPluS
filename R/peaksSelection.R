@@ -94,19 +94,25 @@ peaksSelection <- function(data, channel="green", metric="median", Nchannel=NA, 
       peaks <- setNames(data.frame(matrix(ncol = length(theColNames), nrow = 0)), theColNames)
     }else{
       # select corresponding data and compute metric
-      if (metric=="AUC"){  # AUC is computed as the sum of data points multiplied by the sampling time
-        metric<-function(x){sum(x)*(data$time[2]-data$time[1])}
-      }else{
-        metric <- match.fun(metric)
-      }
       x_all<-data
       x_all$time<-NULL
       
       pAll<-NA*x_all[1:length(ix_start),]
       rownames(pAll)<-NULL
-      for (i in 1:length(ix_start)){
-        tmp_all<- x_all[seq(ix_start[i], ix_end[i]), , drop = FALSE]
-        pAll[i,]<-apply(tmp_all,2,metric) # store the computed metric for each channel
+      
+      if (metric!="AUC"){ 
+        metric <- match.fun(metric)
+        for (i in 1:length(ix_start)){
+          tmp_all<- x_all[seq(ix_start[i], ix_end[i]), , drop = FALSE]
+          pAll[i,]<-apply(tmp_all,2,metric) # store the computed metric for each channel
+        }
+        
+      }else{ # AUC is computed as the sum of data points multiplied by the sampling time
+        metric<-function(x, end.time, start.time){sum(x)*(end.time-start.time)}
+        for (i in 1:length(ix_start)){
+          tmp_all <- x_all[seq(ix_start[i], ix_end[i]), , drop = FALSE]
+          pAll[i,]<-apply(tmp_all,2,metric, data$time[ix_end][i], data$time[ix_start][i])
+        }
       }
       
       # store the corresponding time points
